@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+        integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    <title>Document</title>
+    <link rel="stylesheet" href="/propose.css">
+    <link rel="stylesheet" href="/home/home.css">
+</head>
+
+<body>
+    <input type="checkbox" id="meau-switch">
+    <nav class="navbar sticky-top navbar-dark bg-dark">
+        <!-- Navbar content -->
+        <div>
+            <a href="/home/main.html"><img src="https://picsum.photos/50/50/?random=10"></a>
+            <a href="/home/main.html">
+                <h1>校園政策平台網</h1>
+            </a>
+        </div>
+
+        <label for="meau-switch" class="hb">
+            <span></span>
+            <span></span>
+            <span></span>
+        </label>
+        <div class="main-nav">
+            <a class="btn btn-primary" href="/home/main.html" role="button">首頁</a>
+            <a class="btn btn-primary" href="/proposal/proposal.html" role="button">提案</a>
+            <a class="btn btn-primary" href="/usesupervision/usesupervision.html" role="button">監督</a>
+            <a class="btn btn-primary" href="/makevarious/makevarious.html" role="button">各處室</a>
+        </div>
+    </nav>
+
+    <div class="main">
+        <div class="main-wh">
+            <nav>
+                <div class="search">
+                    <input id="hinge" class="form-control" type="text" placeholder="請輸入關鍵字">
+                    <button id="hingebtn" type="button" class="btn btn-secondary btn-sm">搜尋</button>
+                </div>
+                <div id="search-content">
+
+                </div>
+            </nav>
+            <div id="proposal">
+
+            </div>
+        </div>
+    </div>
+
+    <div class="end">
+        <div class="tal">
+            <div>
+                <h4>聯絡資訊</h4>
+                <h5>
+                    30012 新竹市香山區五福路二段707號<br>
+                    707, Sec.2, WuFu Rd., Hsinchu, Taiwan 30012, R.O.C. 電話：03-5374281~5 傳真：03-5373771
+                </h5>
+            </div>
+            <div>
+                <h4>緊急聯絡</h4>
+                <h5>
+                    校園安全專線：0972590728 (全日)<br>
+                    學生宿舍專線：03-5376000,<br>03-5375015
+                </h5>
+            </div>
+        </div>
+        <div class="a">上半部超連結</div>
+        <div class="a"><!--往網站介紹連結--></div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.4.js"
+        integrity="sha256-a9jBBRygX1Bh5lt8GZjXDzyOB+bWve9EiO7tROUtj/E=" crossorigin="anonymous">
+    </script>
+    <!--首頁_提案瀏覽-->
+    <script>
+        let url = "/home/propose.json";
+        //所有提案_Div
+        let main = document.getElementById("proposal");
+        window.onload = function () {
+            requestJson();
+        }
+        let proposeArray = [];
+        let num = 1; //頁碼初始值
+
+        let xhr = new XMLHttpRequest();
+        function requestJson() {
+            xhr.onload = function () {
+                proposeArray = this.response;
+
+                proposeArray.forEach((item, index) => {
+                    //不在num頁碼時，跳到下一個index
+                    if (index < 8 * (num - 1) || index >= 8 * num) {
+                        return;
+                    }
+
+                    let a = document.createElement("a");
+                    //card
+                    let div = document.createElement("div");
+                    //card-content
+                    let div2 = document.createElement("div");
+                    //card-icon
+                    let img = document.createElement("img");
+                    //card-title
+                    let h3 = document.createElement("h3");
+                    //contect-nav
+                    let nav = document.createElement("nav");
+                    //agree
+                    let p = document.createElement("p");
+                    //message
+                    let p2 = document.createElement("p");
+
+                    cardSetStyle(); //card-Set style
+
+                    h3.innerHTML = `<h3>${item.title}</h3>`;
+                    p.innerHTML = `同意數: ${item.agree}`;
+                    p2.innerHTML = `留言數: ${item.message}`;
+
+                    div.append(img);
+                    div2.append(h3);
+                    nav.append(p);
+                    nav.append(p2);
+                    div2.append(nav);
+                    div.append(div2);
+                    a.append(div);
+                    main.append(a);
+
+                    function cardSetStyle() {
+                        //跳轉-提案
+                        a.href = `/initial.html?${item.title}`;
+                        a.className = "cardhref"
+                        div.className = "maincard";
+                        img.src = "https://picsum.photos/200/200/?random=10";
+                        img.style.width = "50%";
+                        img.style.height = "90%";
+                        nav.style.flexDirection = "row";
+                    }
+
+
+                });
+
+                //Set頁碼
+                page();
+                function page() {
+                    let div = document.createElement("div");
+                    div.className = "page";
+                    let ul = document.createElement("ul");
+                    ul.className = "pagination";
+
+                    //ceil無條件進位
+                    for (var i = 0; i < Math.ceil(proposeArray.length / 8); i++) {
+                        let li = document.createElement("li");
+                        li.className = "page-item";
+                        let a = document.createElement("a");
+                        a.className = "page-link";
+                        a.innerText = i + 1;
+                        a.id = `page${i + 1}`;
+                        li.append(a);
+                        ul.append(li);
+
+                    }
+                    div.append(ul);
+                    main.append(div);
+                }
+                //click頁碼
+                for (var i = 0; i < Math.ceil(proposeArray.length / 8); i++) {
+                    let page = document.getElementById(`page${i + 1}`);
+                    // console.log(i);
+                    $(`#page${i + 1}`).click(function () {
+                        main.innerHTML = "";
+                        requestJson();
+                        num = page.innerText;
+                        // console.log(num);
+                    })
+                }
+            }
+            xhr.open("GET", url);
+            xhr.responseType = "json";
+            xhr.send();
+        }
+    </script>
+    <!--搜尋-->
+    <script>
+        //搜尋結果_Div
+        let seach = document.getElementById("search-content");
+
+        $("#hingebtn").click(function () {
+            //初始
+            seach.style.padding = "unset";
+            seach.innerHTML = "";
+            // console.log(seach.innerHTML);
+            //搜尋Value_input
+            let hinge = document.getElementById("hinge").value;
+            // console.log(hinge);
+
+            let proposalArray = xhr.response;
+            //Set搜尋結果
+            for (var i = 0; i < proposalArray.length; i++) {
+                let a = document.createElement("a");
+                let e = proposalArray[i];
+                //是否包含value
+                let titleTure = e.title.toLowerCase().includes(hinge.toLowerCase());
+                let contentTure = e.content.toLowerCase().includes(hinge.toLowerCase());
+                let gerentTure = e.gerent.toLowerCase().includes(hinge.toLowerCase());
+                //搜尋是否空值
+                if (hinge == "") {
+
+                    alert("請輸入關鍵字!!");
+                    //結束迴圈
+                    throw new Error("");
+                }
+                else {
+                    //包含為Ture，則Set結果
+                    //都為Flase，則回傳"查無結果"
+                    if (titleTure) {
+                        setSeach();
+                    }
+                    else if (contentTure) {
+                        setSeach();
+                    }
+                    else if (gerentTure) {
+                        setSeach();
+                    }
+                    else if (!seach.innerText && i == (proposalArray.length - 1)) {
+                        seach.innerHTML = "<h1 style='color:red;text-align: center;'>**查無資料**</h1>";
+                        seach.style.padding = "10px";
+                    }
+                }
+                //搜尋結果
+                function setSeach() {
+                    a.href = `/initial.html?${e.title}`;
+                    a.className = "btn btn-outline-dark";
+                    a.innerHTML = `提案:${e.title}<hr>
+                                內容:${e.content.substr(0, 40)}...<br>
+                                影響:${e.gerent.substr(0, 40)}...`;
+                    
+                    seach.append(a);
+                    seach.style.padding = "1.5% 2%";
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>
